@@ -1,7 +1,7 @@
 
 ---
 
-# 📁 `snapp_senior_devops_interview-2025_may`
+# 📁 `snapp_box_senior_devops_interview-2025_may`
 
 ## Kubernetes
 
@@ -255,4 +255,111 @@ Kubernetes networking enables **Pod-to-Pod**, **Pod-to-Service**, and **intra-/i
 
 ---
 
-### 10. **How does the Kubernetes network work?**
+## 10. **How Does the Kubernetes Network Work?**
+
+---
+
+## 🧱 Key Design Principles
+
+Kubernetes has **two fundamental assumptions** about networking:
+
+1. **Every Pod gets its own unique IP address.**
+2. **All Pods can communicate with each other, without NAT.**
+
+> This is very different from traditional networking, where multiple containers share one IP and use port mapping.
+
+---
+
+## 📦 Networking Layers in Kubernetes
+
+Let’s break it into the main components that make it work:
+
+---
+
+### 1. 🧩 **Container Network Interface (CNI)**
+
+> The **CNI plugin** is responsible for assigning IP addresses to Pods and configuring network routes.
+
+* When a Pod is created, Kubernetes calls the CNI to:
+
+  * Assign a **unique IP** to the Pod
+  * Set up **virtual networking** (bridge, veth pair)
+  * Configure routing tables and interfaces
+* Examples: **Calico**, **Flannel**, **Cilium**, **Weave**
+
+📌 **CNI enables Pod-to-Pod communication**, even across nodes.
+
+---
+
+### 2. 🔄 **Service Networking (ClusterIP + kube-proxy)**
+
+Kubernetes Services provide a **stable virtual IP** (ClusterIP) to access a group of Pods.
+
+* `kube-proxy` runs on every node and handles traffic to ClusterIP Services.
+* It uses:
+
+  * `iptables` (rules in kernel)
+  * `IPVS` (IP Virtual Server in kernel)
+  * `eBPF` (modern method in Cilium)
+
+📌 kube-proxy ensures **load balancing** and **routing** from Service IP → healthy Pod IPs.
+
+---
+
+### 3. 🚪 **Node Networking (Inter-node Traffic)**
+
+* If Pods on different nodes need to talk, traffic goes over the **underlying node network**.
+* The **CNI must handle inter-node routing**.
+
+  * Example: Calico uses BGP to advertise Pod routes.
+* Without this, Pods on different nodes wouldn’t be able to reach each other.
+
+---
+
+### 4. 🌍 **External Communication (Egress/Ingress)**
+
+* **Ingress**: HTTP(S) traffic from outside → exposed using **Ingress controllers** (NGINX, Traefik).
+* **NodePort / LoadBalancer**: Allow external access to Services.
+* **Egress**: Pods accessing the internet.
+
+  * Usually NATed via the **node’s IP**.
+  * Some CNI plugins (e.g., Calico) can control egress traffic too.
+
+---
+
+## 🔁 Common Traffic Flows
+
+| Scenario                   | Flow                                                 |
+| -------------------------- | ---------------------------------------------------- |
+| Pod → Pod (same node)      | CNI routes traffic directly                          |
+| Pod → Pod (different node) | CNI + underlying node network                        |
+| Pod → Service              | kube-proxy routes to a Pod via ClusterIP             |
+| External → Service         | LoadBalancer / NodePort / Ingress → kube-proxy → Pod |
+| Pod → Internet             | Pod IP SNAT’d to Node IP → internet                  |
+
+---
+
+## 11. **Calico Vs Cilium**
+
+---
+
+## 🥊 Calico vs. Cilium
+
+| Feature / Aspect             | **Calico**                                 | **Cilium**                                                      |
+| ---------------------------- | ------------------------------------------ | --------------------------------------------------------------- |
+| **Technology Base**          | Linux kernel routing + iptables / IPVS     | **eBPF** (kernel-level, faster + modern)                        |
+| **Networking Model**         | Traditional L3 routing                     | Native L3/4/7 with eBPF                                         |
+| **CNI Support**              | Yes                                        | Yes                                                             |
+| **eBPF-based**               | Optional (Calico eBPF mode exists)         | ✅ Built entirely on eBPF                                        |
+| **Service Routing**          | kube-proxy or eBPF mode                    | **Replaces kube-proxy with eBPF**                               |
+| **Network Policies**         | L3/L4 (IP, port-based)                     | ✅ L3/L4 **+ L7-aware policies** (e.g., HTTP)                    |
+| **Performance**              | Good (depends on mode)                     | **Excellent** (less context switch, no iptables)                |
+| **Observability**            | Basic tools (Flow logs, Felix metrics)     | ✅ **Hubble**: full observability with service maps, flows, etc. |
+| **Encryption**               | WireGuard or IPsec                         | Native with eBPF + XDP                                          |
+| **Kube-Proxy Replacement**   | Optional (only in eBPF mode)               | ✅ Fully replaces kube-proxy                                     |
+| **Cloud Native Integration** | AWS, GCP, Azure, OpenStack                 | AWS, GCP, Azure, etc.                                           |
+| **Complexity**               | Mature and familiar (iptables-based)       | More modern, can be complex to troubleshoot                     |
+| **Enterprise Features**      | Available via **Tigera Calico Enterprise** | Available via **Cilium Enterprise (Isovalent)**                 |
+
+---
+
