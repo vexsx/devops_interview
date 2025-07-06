@@ -1,12 +1,6 @@
 
 ---
 
-# 📁 `snapp_box_senior_devops_interview-2025_may`
-
-## Kubernetes
-
----
-
 ### 1. **What is Kubernetes?**
 
 Kubernetes is an open-source **container orchestration platform** designed to automate deployment, scaling, and operation of application containers across clusters of hosts.
