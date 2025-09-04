@@ -77,3 +77,6 @@
 
   * `iptables` is a powerful tool for configuring network traffic rules in Linux. You can use it to forward traffic between interfaces, set up NAT (Network Address Translation), block or allow specific IPs or ports, and more. It’s commonly used for network security and routing configurations.
 
+* **Http Codes:**
+
+  * read from [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status) 
