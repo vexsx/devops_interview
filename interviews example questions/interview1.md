@@ -87,4 +87,16 @@
 
 
 
-  * docker compose best practice
+  * docker compose best practice ? 
+
+  * diff between docker container and docker image 
+
+  RabbitMQ vs Kafka? RabbitMQ = broker/routers with acks, flexible routing, per-message semantics; Kafka = distributed log, partitioned, pull-based, huge throughput & retention.
+
+Clustering vs Federation/Shovel? Cluster = single logical broker in one LAN; Federation/Shovel = link brokers across WAN/DCs.
+
+Quorum queues advantages? Raft-based replication, predictable failover, no “split-brain” mirrored-queue issues.
+
+How to avoid message loss? Durable queues + persistent messages + publisher confirms + mirrored/quorum replication + correct acks.
+
+Back-pressure handling? Prefetch tuning, max-length policies, lazy/quorum queues, rate limits, DLQs, and scale consumers.
