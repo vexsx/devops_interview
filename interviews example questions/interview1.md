@@ -100,3 +100,6 @@ Quorum queues advantages? Raft-based replication, predictable failover, no “sp
 How to avoid message loss? Durable queues + persistent messages + publisher confirms + mirrored/quorum replication + correct acks.
 
 Back-pressure handling? Prefetch tuning, max-length policies, lazy/quorum queues, rate limits, DLQs, and scale consumers.
+
+kuber loadbalancers ?
+
