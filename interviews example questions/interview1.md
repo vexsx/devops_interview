@@ -85,4 +85,6 @@
 
   * read from [here](https://www.quotaguard.com/blog/ssl-passthrough-vs-ssl-offloading-a-quick-primer/#:~:text=the%20decrypted%20traffic.-,In%20SSL%20Termination%2C%20the%20load%20balancer%20establishes%20a%20new%20SSL,traffic%20as%20unencrypted%20HTTP%20traffic.) 
 
-  
+
+
+  * docker compose best practice
